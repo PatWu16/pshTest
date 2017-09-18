@@ -10,6 +10,6 @@ export const getInquiryType = async () => {
 }
 
 // 购买商品
-export const buyProduct = async (time) => {
-  return await axiosApi(`${apiUrl1}Report/reportTotalCustomer?ym=${time}`, 'get')
+export const submitRequest = async (requestInfo) => {
+  return await axiosApi(`${apiUrl1}Orders/InquiryAdd`, 'post', requestInfo)
 }

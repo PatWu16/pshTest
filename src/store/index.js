@@ -6,6 +6,10 @@ import Vuex from 'vuex'
 import customerStatistics from './my/customerStatistics'
 import scanResult from './scan/scanResult'
 import buy from './buy/index'
+import feedback from './scan/feedback'
+import myInfo from './my/myInfo'
+import myOrder from './my/myOrder'
+import myProduct from './my/myProduct'
 
 Vue.use(Vuex)
 
@@ -23,6 +27,10 @@ export const store = new Vuex.Store({
   modules: {
     customerStatistics,
     scanResult,
-    buy
+    buy,
+    feedback,
+    myInfo,
+    myOrder,
+    myProduct
   }
 })

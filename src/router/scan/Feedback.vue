@@ -1,6 +1,6 @@
 <template>
   <div id="feedback">
-    <common-header title="一键反馈"></common-header>
+    <common-header title="技术支持"></common-header>
     <group>
       <cell title="客服电话">
         <div slot="value">
@@ -11,14 +11,18 @@
         <div slot="value">CASE@ashcroft.com</div>
       </cell>
     </group>
+    <group-title>请选择要反馈的产品</group-title>
+    <group labelWidth="80px">
+      <popup-picker title="选择产品" value-text-align="left" :data="inquiryType" v-model="product" :columns="1" show-name placeholder="请选择" @on-change="onChange"></popup-picker>
+    </group>
     <group title="上传图片">
       <div class="photo">
-        <div class="imgItem" v-for="(item,index) in defaultRiskHiddenAdd.RiskHiddenBeforePhotosPath">
+        <div class="imgItem" v-for="(item, index) in photos">
           <img :src="(item.url.indexOf('http://') > -1 ? item.url : `${baseUrl}${item.url}`)" alt="">
           <div class="delete" @click="deletePhoto(index)"><Icon slot="icon" :name="'delete-icon'" /></div>
         </div>
 
-        <div class="imgItem" v-if="defaultRiskHiddenAdd.RiskHiddenBeforePhotosPath.length < 6 && defaultRiskHiddenAdd.RiskChangedAfterPhotosPath.length < 6">
+        <div class="imgItem" v-if="photos.length < 6">
           <div class="fileBox">
             <div class="fileBoxs">
               <input class="fileBtn" @change="changeFile" type="file" accept="image/*" ref="fileBtn" >
@@ -27,20 +31,22 @@
         </div>
       </div>
     </group>
+    <group-title>问题描述</group-title>
     <group>
-      <x-textarea :max="200" :rows="5" autosize placeholder="问题描述"></x-textarea>
+      <x-textarea :max="200" :rows="3" autosize placeholder="问题描述" v-model="intro"></x-textarea>
     </group>
     <box gap="30px 10px 10px">
-      <x-button type="primary">提交</x-button>
+      <x-button type="primary" @click.native="submit">提交</x-button>
     </box>
   </div>
 </template>
 
 <script>
-  import { Cell, Group, XTextarea, XButton, Box } from 'vux'
+  import { Cell, Group, XTextarea, XButton, Box, PopupPicker, GroupTitle } from 'vux'
   import CommonHeader from '../../components/Header.vue'
   import { baseUrl } from '../../utils/subei_config'
-  import { mapMutations } from 'vuex'
+  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { openConfirm, toast } from '../../utils/base'
 
   export default {
     components: {
@@ -49,50 +55,84 @@
       Group,
       XTextarea,
       XButton,
-      Box
+      Box,
+      PopupPicker,
+      GroupTitle
     },
     data () {
       return {
         baseUrl: baseUrl,
-        defaultRiskHiddenAdd: {
-          RiskHiddenBeforePhotosPath: [],
-          RiskChangedAfterPhotosPath: []
-        }
+        photos: [],
+        intro: '',               // 问题描述
+        product: [''],           // 对应的产品id
+        productName: '',         // 产品名称
+        files: []                 // 选择的图片
       }
+    },
+    computed: {
+      ...mapState({
+        inquiryType: (state) => {
+          return state.buy.inquiryType
+        }
+      })
+    },
+    watch: {},
+    created () {
+      this.getInquiryType()
     },
     methods: {
       ...mapMutations([
         'updateLoadingStatus'
       ]),
+      ...mapActions([
+        'getInquiryType',
+        'submitFeedback',
+        'postUploadPhoto'
+      ]),
+      // 提交反馈
+      submit () {
+        if (!this.product[0] && !this.photos.length && !this.intro) {
+          toast('请填写您要反馈的信息', '11rem')
+          return
+        }
+        const submitInfo = {
+          SupportMemberId: 0,
+          SupportProductId: this.product[0],
+          SupportProductName: this.productName,
+          SupportPhotoPath: this.photos.join()
+        }
+        this.submitFeedback(submitInfo)
+      },
       deletePhoto (index) {
-
-         /* this.openConfirm({state:true,msg:'确定要删除吗',control:()=>{
-          this.defaultRiskHiddenAdd.RiskHiddenBeforePhotosPath.splice(index,1);
-           console.log(this.RiskHiddenBeforePhotos);
-         }}); */
-
+        openConfirm('确定要删除吗', () => {
+          this.photos.splice(index, 1)
+        })
+      },
+      // picker选择修改
+      onChange (val) {
+        this.inquiryType.map((item) => {
+          if (item.value === val[0]) {
+            this.productName = item.name
+            return
+          }
+        })
       },
       changeFile () {
-        /* this.files = this.$refs.fileBtn.files[0];
+        this.files = this.$refs.fileBtn.files[0]
 
-        if(this.files){
-          let formData = new FormData();
-          formData.append("file", this.files);
-
+        if (this.files) {
+          let formData = new FormData()
+          formData.append('file', this.files)
           this.updateLoadingStatus({isLoading: true})
-
-          this.postUploadPhoto({type:'RiskHidden',formData: formData}).then((res)=>{
-
-            res.info.path = (res.info.path.indexOf('https://') > 0 ? res.info.path:`${param_baseUrls}${res.info.path}`);
-            this.defaultRiskHiddenAdd.RiskHiddenBeforePhotosPath.push({
-              name:res.info.name,
-              url:res.info.path,
-            });
-
+          this.postUploadPhoto({type: 'RiskHidden', formData: formData}).then((res) => {
+            res.info.path = (res.info.path.indexOf('https://') > 0 ? res.info.path : `${baseUrl}${res.info.path}`)
+            this.photos.push({
+              name: res.info.name,
+              url: res.info.path
+            })
             this.updateLoadingStatus({isLoading: false})
-
-          });
-        } */
+          })
+        }
       }
     }
   }
@@ -102,6 +142,10 @@
 #feedback {
   .weui-cell__ft {
     color: #333;
+  }
+
+  .weui-cells {
+    margin-top: 0;
   }
 
   .photo{

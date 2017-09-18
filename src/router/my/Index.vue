@@ -13,38 +13,38 @@
       <cell title="我的订单" is-link @click.native="goPage('myOrder', {})">
         <img slot="icon" width="20" class="icon" src="../../assets/img/my-order.png">
       </cell>
-      <cell title="我的商品" is-link @click.native="goPage('myProduct', {})">
+      <cell title="我的产品" is-link @click.native="goPage('myProduct', {})">
         <img slot="icon" width="20" class="icon" src="../../assets/img/product.png">
       </cell>
     </group>
     <WhiteSpace size="lg"></WhiteSpace>
     <grid class="grid-wrapper">
       <grid-item label="产品查询" @on-item-click="goPage('productList', {})">
-        <img slot="icon" src="../../assets/img/product.png">
+        <img slot="icon" src="../../assets/img/selectionguides.png">
       </grid-item>
       <grid-item label="客户查询" @on-item-click="goPage('customerList', {})">
-        <img slot="icon" src="../../assets/img/customer.png">
+        <img slot="icon" src="../../assets/img/selectionguides.png">
       </grid-item>
       <grid-item label="订单预警" @on-item-click="goPage('orderWarn', {})">
-        <img slot="icon" src="../../assets/img/warn.png">
+        <img slot="icon" src="../../assets/img/drawingsmodels.png">
       </grid-item>
       <grid-item label="订单快递" @on-item-click="goPage('logistics', {})">
-        <img slot="icon" src="../../assets/img/express.png">
+        <img slot="icon" src="../../assets/img/data.png">
       </grid-item>
       <grid-item label="客户统计" @on-item-click="goPage('customerStatistics', {})">
-        <img slot="icon" src="../../assets/img/customer-statistics.png">
+        <img slot="icon" src="../../assets/img/data.png">
       </grid-item>
       <grid-item label="业绩统计" @on-item-click="goPage('performanceStatistics', {})">
-        <img slot="icon" src="../../assets/img/performance-statistics.png">
+        <img slot="icon" src="../../assets/img/data.png">
       </grid-item>
       <grid-item label="防伪管理" @on-item-click="toastDevelopment">
-        <img slot="icon" src="../../assets/img/security.png">
+        <img slot="icon" src="../../assets/img/installationmaint.png">
       </grid-item>
       <grid-item label="保修管理" @on-item-click="toastDevelopment">
-        <img slot="icon" src="../../assets/img/repair.png">
+        <img slot="icon" src="../../assets/img/technical.png">
       </grid-item>
       <grid-item label="询价管理" @on-item-click="toastDevelopment">
-        <img slot="icon" src="../../assets/img/inquiry.png">
+        <img slot="icon" src="../../assets/img/selectionguides.png">
       </grid-item>
     </grid>
     <toast v-model="isToastShow" is-show-mask position="middle" type="cancel">开发中...</toast>
@@ -55,7 +55,7 @@
 <script>
   import { Blur, Cell, Group, Grid, GridItem, Toast } from 'vux'
   import WhiteSpace from '../../components/WhiteSpace.vue'
-  import avatar from '../../assets/img/avatar.jpg'
+  import logo from '../../assets/img/logo.jpg'
 
   export default {
     components: {
@@ -69,7 +69,7 @@
     },
     data () {
       return {
-        url: avatar,
+        url: logo,
         height: '',
         isToastShow: false
       }
@@ -123,6 +123,10 @@
 
   .grid-wrapper {
     background: #fff;
+  }
+
+  .weui-grid__icon img {
+    width: 87.5%;
   }
 }
 </style>

@@ -68,13 +68,17 @@
               <thead>
               <tr>
                 <th>月份</th>
-                <th>销售</th>
-                <th>发票</th>
+                <th>销售目标</th>
+                <th>实际销售</th>
+                <th>目标差异</th>
+                <th>销售发票</th>
               </tr>
               </thead>
               <tbody>
               <tr v-for="i in item.itemDetail">
                 <td>{{i.month}}</td>
+                <td>{{i.sale}}</td>
+                <td>{{i.invoice}}</td>
                 <td>{{i.sale}}</td>
                 <td>{{i.invoice}}</td>
               </tr>
@@ -111,11 +115,17 @@
             label: '业务员',
             value: '蔡政雅'
           }, {
-            label: '销售合计',
+            label: '销售目标',
             value: 221368
           }, {
-            label: '发票合计',
-            value: 221368
+            label: '实际销售',
+            value: 311384
+          }, {
+            label: '目标差异',
+            value: 368
+          }, {
+            label: '销售发票',
+            value: 3221
           }],
           itemDetail: [{
             month: '一月',
@@ -211,6 +221,10 @@
       height: calc(~"100% - 90px");
       overflow: auto;
 
+      .vux-table {
+        min-width: 600px;
+      }
+
       .vux-table td, .vux-table th {
         font-size: 0.9rem;
       }
@@ -301,9 +315,10 @@
       }
 
       .item-detail {
-        overflow: hidden;
         max-height: 0;
         transition: max-height .5s cubic-bezier(0, 1, 0, 1) -.1s;
+        width: 100%;
+        overflow: auto;
 
         .weui-form-preview__bd {
           color: #999;

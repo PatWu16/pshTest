@@ -6,7 +6,7 @@
         <img slot="icon" src="../../assets/img/qr-scan.png" @click="goPage('scanResult', {code: 'H1602770CN'})">
       </grid-item>
       <grid-item label="技术支持">
-        <img slot="icon" src="../../assets/img/feedback.png" @click="goPage('feedback', {})">
+        <img slot="icon" style="width: 87.5%;" src="../../assets/img/technical.png" @click="goPage('feedback', {})">
       </grid-item>
     </grid>
   </div>

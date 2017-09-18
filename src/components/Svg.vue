@@ -20,7 +20,7 @@
     fill: #888;
   }
   use.ic1 {
-    fill: #218ff1;
+    fill: #005da8;
   }
   svg path {
     fill: inherit;

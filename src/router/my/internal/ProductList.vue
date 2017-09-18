@@ -1,6 +1,6 @@
 <template>
   <div id="product-list" :style="{height: height}">
-    <common-header title="商品查询"></common-header>
+    <common-header title="产品查询"></common-header>
     <div class="header">
       <search
         top="46px"

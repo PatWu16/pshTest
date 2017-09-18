@@ -1,19 +1,14 @@
 /**
  * Created by Administrator on 2017/9/15.
  */
-/**
- * Created by Administrator on 2017/9/15.
- */
-/**
- * Created by Administrator on 2017/9/15.
- */
-import { getInquiryType, buyProduct } from '../../servers/buy'
+import { getInquiryType, submitRequest } from '../../servers/buy'
+import { toast } from '../../utils/base'
 
 const state = {
-  inquiryType: [[{
+  inquiryType: [{
     name: '',
-    id: null
-  }]]
+    value: null
+  }]
 }
 
 const mutations = {
@@ -28,39 +23,19 @@ const actions = {
     getInquiryType().then((res) => {
       let result = res.info.map(function (item) {
         return {
-          name: item.fgtypenm_产品类别,
-          value: item.fgtypeid_产品类别ID
+          name: item.fgtypenm_产品类别.toString(),
+          value: item.fgtypeid_产品类别ID.toString()
         }
       })
-      commit('saveInquiryType', [result])
+      commit('saveInquiryType', result)
     })
   },
   // 购买商品
-  getProductwe ({commit, state, dispatch, getters}, payload) {
-    buyProduct(payload).then((res) => {
-      let result = [{
-        label: '序列号',
-        value: res.info[0].SN_序列号
-      }, {
-        label: '产品代码',
-        value: res.info[0].FGNO_产品代码
-      }, {
-        label: '销售订单',
-        value: res.info[0].SONO_销售订单
-      }, {
-        label: '联系电话',
-        value: res.info[0].tel_电话
-      }, {
-        label: '客户代码',
-        value: res.info[0].cusno_客户代码
-      }, {
-        label: '客户名称',
-        value: res.info[0].cusnm_客户名称
-      }, {
-        label: '出厂日期',
-        value: res.info[0].shipdt_出厂日期
-      }]
-      commit('saveProduct', result)
+  submitRequest ({commit, state, dispatch, getters}, payload) {
+    submitRequest(payload).then((res) => {
+      if (res.all.status) {
+        toast(res.all.info)
+      }
     })
   }
 }

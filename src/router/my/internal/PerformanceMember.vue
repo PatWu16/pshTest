@@ -56,13 +56,17 @@
         <thead>
         <tr>
           <th>月份</th>
-          <th>销售</th>
-          <th>发票</th>
+          <th>销售目标</th>
+          <th>实际销售</th>
+          <th>目标差异</th>
+          <th>销售发票</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="i in itemDetail">
           <td>{{i.month}}</td>
+          <td>{{i.sale}}</td>
+          <td>{{i.invoice}}</td>
           <td>{{i.sale}}</td>
           <td>{{i.invoice}}</td>
         </tr>
@@ -181,6 +185,10 @@
       width: 100%;
       height: calc(~"100% - 90px");
       overflow: auto;
+
+      .vux-table {
+        min-width: 600px;
+      }
     }
 
   }

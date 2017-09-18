@@ -53,8 +53,7 @@
     },
     data () {
       return {
-        date: '2017-08',
-        date1: '2017-08'
+        date: '2017-08'
       }
     },
     computed: {
@@ -70,8 +69,7 @@
       }
     },
     created () {
-      const date = dateFormat(new Date(), 'YYYY-MM')
-      this.date1 = date
+      this.date = dateFormat(new Date(), 'YYYY-MM')
       this.getList()
     },
     methods: {
