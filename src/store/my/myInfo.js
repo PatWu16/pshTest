@@ -1,7 +1,8 @@
 /**
  * Created by Administrator on 2017/9/18.
  */
-import { getMyInfo } from '../../servers/my'
+import { getMyInfo, changeMyInfo } from '../../servers/my'
+import { toast } from '../../utils/base'
 
 const state = {
   myInfo: {
@@ -21,7 +22,7 @@ const mutations = {
 }
 
 const actions = {
-  // 获取客户统计列表
+  // 获取客户信息
   getMyInfo ({commit, state, dispatch, getters}, payload) {
     getMyInfo(payload).then((res) => {
       const myInfo = {
@@ -33,6 +34,25 @@ const actions = {
         name: res.info[0].Contact_联系人
       }
       commit('saveMyInfo', myInfo)
+    })
+  },
+  // 修改客户信息
+  changeMyInfo ({commit, state, dispatch, getters}, payload) {
+    changeMyInfo(payload).then((res) => {
+      if (res.all.status) {
+        toast('修改成功')
+        commit('saveMyInfo', {
+          id: payload.ID,
+          customerCode: payload.cusno_客户代码,
+          customerName: payload.cusnm_客户名称,
+          customerAddress: payload.address_地址,
+          phone: payload.phone_电话,
+          name: payload.Contact_联系人
+        })
+        setTimeout(() => {
+          window.history.back()
+        }, 1000)
+      }
     })
   }
 }

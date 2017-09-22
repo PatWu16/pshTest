@@ -12,9 +12,9 @@ export default (url, type, param) => {
   axios.defaults.withCredentials = true
   axios.defaults.timeout = 5000
   const goBack = () => {
-    setTimeout(() => {
-      history.go(((history.length * -1) + 1))
-    }, 1500)
+    // setTimeout(() => {
+    //   history.go(((history.length * -1) + 1))
+    // }, 1500)
   }
   const timeOut = () => {
     Vue.$vux.loading.show({
@@ -121,6 +121,7 @@ export default (url, type, param) => {
       break
     case 'postFile':
       const postFileApi = new Promise((resolve, reject) => {
+        axios.defaults.withCredentials = false
         timeOut()
         axios.post(url, param).then((res) => {
           isLoading = false

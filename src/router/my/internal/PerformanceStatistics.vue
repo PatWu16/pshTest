@@ -3,7 +3,7 @@
     <common-header title="业绩统计"></common-header>
     <div class="header">
       <group>
-        <datetime v-model="date" placeholder="请选择" :min-year=2000 :max-year=2050 format="YYYY" @on-change="change" title="选择年份" year-row="{value}年" confirm-text="完成" cancel-text="取消"></datetime>
+        <datetime v-model="date" placeholder="请选择" :min-year=2000 :max-year=2050 format="YYYY" title="选择年份" year-row="{value}年" confirm-text="完成" cancel-text="取消"></datetime>
       </group>
     </div>
     <div class="content">
@@ -49,10 +49,10 @@
           </tbody>
         </x-table>
       </scroller>-->
-      <div v-for="(item, index) in list">
+      <div v-for="(item, index) in performanceStatisticsList">
         <div class="item-wrapper">
           <WhiteSpace size="md"></WhiteSpace>
-          <div class="item-content" @click="goPage('performanceDepartment', {})">
+          <div class="item-content" @click="goPage('performanceDepartment', {departmentName: item.departmentName, departmentId: item.departmentId, time: date})">
             <form-preview :body-items="item.itemHeader"></form-preview>
             <span class="arrow-right"></span>
           </div>
@@ -76,9 +76,9 @@
               <tbody>
               <tr v-for="i in item.itemDetail">
                 <td>{{i.month}}</td>
+                <td>{{i.target}}</td>
                 <td>{{i.sale}}</td>
-                <td>{{i.invoice}}</td>
-                <td>{{i.sale}}</td>
+                <td>{{i.diff}}</td>
                 <td>{{i.invoice}}</td>
               </tr>
               </tbody>
@@ -86,6 +86,7 @@
           </div>
         </div>
       </div>
+      <no-data :item="performanceStatisticsList" :load="getList"></no-data>
       <WhiteSpace size="sm"></WhiteSpace>
     </div>
   </div>
@@ -94,7 +95,9 @@
 <script>
   import CommonHeader from '../../../components/Header.vue'
   import WhiteSpace from '../../../components/WhiteSpace.vue'
-  import { XTable, Scroller, Datetime, Group, FormPreview } from 'vux'
+  import { XTable, Scroller, Datetime, Group, FormPreview, dateFormat } from 'vux'
+  import NoData from '../../../components/NoData.vue'
+  import { mapActions, mapState } from 'vuex'
 
   export default {
     components: {
@@ -104,94 +107,46 @@
       Scroller,
       Datetime,
       Group,
-      FormPreview
+      FormPreview,
+      NoData
     },
     data () {
       return {
-        date: '2017',
-        list: [{
-          itemHeader: [{
-            label: '部门',
-            value: '销售部门'
-          }, {
-            label: '销售目标',
-            value: 221368
-          }, {
-            label: '实际销售',
-            value: 311384
-          }, {
-            label: '目标差异',
-            value: 368
-          }, {
-            label: '销售发票',
-            value: 3221
-          }],
-          itemDetail: [{
-            month: '一月',
-            sale: 217.95,
-            invoice: 122.36
-          }, {
-            month: '二月',
-            sale: 2417.95,
-            invoice: 122.36
-          }, {
-            month: '三月',
-            sale: 202,
-            invoice: 122.36
-          }, {
-            month: '四月',
-            sale: 12120,
-            invoice: 122.36
-          }, {
-            month: '五月',
-            sale: 352.66,
-            invoice: 122.36
-          }, {
-            month: '六月',
-            sale: 5125.36,
-            invoice: 122.36
-          }, {
-            month: '七月',
-            sale: 5232.11,
-            invoice: 122.36
-          }, {
-            month: '八月',
-            sale: 3221.11,
-            invoice: 122.36
-          }, {
-            month: '九月',
-            sale: 5336.51,
-            invoice: 122.36
-          }, {
-            month: '十月',
-            sale: 6323.33,
-            invoice: 122.36
-          }, {
-            month: '十一月',
-            sale: 565.32,
-            invoice: 122.36
-          }, {
-            month: '十二月',
-            sale: 5456.25,
-            invoice: 122.36
-          }],
-          isShowDetail: false
-        }]
+        date: '2017'
       }
     },
-    created () {},
+    computed: {
+      ...mapState({
+        performanceStatisticsList: (state) => {
+          return state.performanceStatistics.performanceStatisticsList
+        }
+      })
+    },
+    watch: {
+      date () {
+        this.getList()
+      }
+    },
+    created () {
+      this.date = dateFormat(new Date(), 'YYYY')
+      this.getList()
+    },
     methods: {
+      ...mapActions([
+        'getPerformanceStatisticsList'
+      ]),
+      // 获取列表
+      getList () {
+        this.getPerformanceStatisticsList(this.date)
+      },
       // 页面跳转
       goPage (name, params) {
         params = (JSON.stringify(params) === '{}' ? {} : params)
         this.$router.push({name: name, params: params})
       },
-      change (value) {
-        console.log('change', value)
-      },
       // 点击底部切换是否显示详情
       switchDetail (index) {
-        this.list[index].isShowDetail = !this.list[index].isShowDetail
+        this.performanceStatisticsList[index].isShowDetail = !this.performanceStatisticsList[index].isShowDetail
       }
     }
   }

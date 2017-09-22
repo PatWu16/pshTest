@@ -3,7 +3,7 @@
     <common-header title="蔡政雅"></common-header>
     <div class="header">
       <group>
-        <datetime v-model="date" placeholder="请选择" :min-year=2000 :max-year=2050 format="YYYY" @on-change="change" title="选择年份" year-row="{value}年" confirm-text="完成" cancel-text="取消"></datetime>
+        <datetime v-model="date" placeholder="请选择" :min-year=2000 :max-year=2050 format="YYYY" title="选择年份" year-row="{value}年" confirm-text="完成" cancel-text="取消"></datetime>
       </group>
     </div>
     <div class="content">
@@ -63,11 +63,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="i in itemDetail">
+        <tr v-for="i in memberStatistics">
           <td>{{i.month}}</td>
+          <td>{{i.target}}</td>
           <td>{{i.sale}}</td>
-          <td>{{i.invoice}}</td>
-          <td>{{i.sale}}</td>
+          <td>{{i.diff}}</td>
           <td>{{i.invoice}}</td>
         </tr>
         </tbody>
@@ -81,6 +81,7 @@
   import CommonHeader from '../../../components/Header.vue'
   import WhiteSpace from '../../../components/WhiteSpace.vue'
   import { XTable, Scroller, Datetime, Group } from 'vux'
+  import { mapActions, mapState } from 'vuex'
 
   export default {
     components: {
@@ -93,9 +94,6 @@
     },
     data () {
       return {
-        date: '2017',
-        height: '',
-        height2: '',
         itemDetail: [{
           month: '一月',
           sale: 217.95,
@@ -148,21 +146,56 @@
           month: '合计',
           sale: 55656456.25,
           invoice: 115122.36
-        }]
+        }],
+        departmentId: null,
+        memberName: '',
+        memberId: null,
+        date: ''
+      }
+    },
+    computed: {
+      ...mapState({
+        memberStatistics: (state) => {
+          return state.performanceMember.memberStatistics
+        }
+      })
+    },
+    watch: {
+      '$route' (to, from) {
+        const routeName = this.$route.name
+
+        if (routeName === 'performanceMember') {
+          const memberId = this.$route.params.memberId
+          const date = this.$route.params.time
+          if ((memberId !== this.memberId || date !== this.date) && memberId) {
+            this.date = date
+            this.departmentId = this.$route.params.departmentId
+            this.memberId = memberId
+            this.memberName = this.$route.params.memberName
+
+            this.getStatistics()
+          }
+        }
+      },
+      date () {
+        this.getStatistics()
       }
     },
     created () {
-      this.height = document.body.clientHeight + 'px'
-      this.height2 = document.body.clientHeight - 46 + 'px'
+      this.date = this.$route.params.time
+      this.departmentId = this.$route.params.departmentId
+      this.memberId = this.$route.params.memberId
+      this.memberName = this.$route.params.memberName
+
+      this.getStatistics()
     },
     methods: {
-      // 页面跳转
-      goPage (name, params) {
-        params = (JSON.stringify(params) === '{}' ? {} : params)
-        this.$router.push({name: name, params: params})
-      },
-      change (value) {
-        console.log('change', value)
+      ...mapActions([
+        'getMemberStatistics'
+      ]),
+      // 获取业务员业绩
+      getStatistics () {
+        this.getMemberStatistics({time: this.date, departmentId: this.departmentId, memberId: this.memberId})
       }
     }
   }

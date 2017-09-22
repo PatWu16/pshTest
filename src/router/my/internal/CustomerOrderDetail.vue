@@ -56,8 +56,10 @@
           </tbody>
         </x-table>
       </scroller>-->
-      <WhiteSpace size="sm"></WhiteSpace>
-      <form-preview :body-items="list"></form-preview>
+      <div class="item-wrapper" v-for="item in customerOrderDetail">
+        <WhiteSpace size="sm"></WhiteSpace>
+        <form-preview :body-items="item"></form-preview>
+      </div>
       <WhiteSpace size="sm"></WhiteSpace>
     </div>
   </div>
@@ -67,6 +69,7 @@
   import CommonHeader from '../../../components/Header.vue'
   import WhiteSpace from '../../../components/WhiteSpace.vue'
   import { XTable, Scroller, Datetime, Group, FormPreview } from 'vux'
+  import { mapActions, mapState } from 'vuex'
 
   export default {
     components: {
@@ -80,7 +83,6 @@
     },
     data () {
       return {
-        date: '2017-09',
         list: [{
           label: '订单号',
           value: 'SO170811818S'
@@ -126,18 +128,50 @@
         }, {
           label: '订单状态',
           value: '已交货'
-        }]
+        }],
+        orderNumber: null,
+        customerCode: null,
+        date: ''
+      }
+    },
+    computed: {
+      ...mapState({
+        customerOrderDetail: (state) => {
+          return state.customerOrderDetail.customerOrderDetail
+        }
+      })
+    },
+    watch: {
+      '$route' (to, from) {
+        const routeName = this.$route.name
+
+        if (routeName === 'customerOrderDetail') {
+          const orderNumber = this.$route.params.orderNumber
+
+          if (orderNumber !== this.orderNumber) {
+            this.orderNumber = orderNumber
+            this.customerCode = this.$route.params.customerCode
+            this.date = this.$route.params.time
+
+            this.getOrderDetail()
+          }
+        }
       }
     },
     created () {
+      this.orderNumber = this.$route.params.orderNumber
+      this.customerCode = this.$route.params.customerCode
+      this.date = this.$route.params.time
+
+      this.getOrderDetail()
     },
     methods: {
-      change (value) {
-        console.log('change', value)
-      },
-      // 点击底部切换是否显示详情
-      switchDetail (index) {
-        this.list[index].isShowDetail = !this.list[index].isShowDetail
+      ...mapActions([
+        'getCustomerOrderDetail'
+      ]),
+      // 获取订单详情
+      getOrderDetail () {
+        this.getCustomerOrderDetail({time: this.date, orderNumber: this.orderNumber})
       }
     }
   }

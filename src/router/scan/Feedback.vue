@@ -19,7 +19,7 @@
       <div class="photo">
         <div class="imgItem" v-for="(item, index) in photos">
           <img :src="(item.url.indexOf('http://') > -1 ? item.url : `${baseUrl}${item.url}`)" alt="">
-          <div class="delete" @click="deletePhoto(index)"><Icon slot="icon" :name="'delete-icon'" /></div>
+          <div class="delete" @click="deletePhoto(index)"><svg-icon slot="icon" :name="'delete-icon'" /></div>
         </div>
 
         <div class="imgItem" v-if="photos.length < 6">
@@ -47,6 +47,7 @@
   import { baseUrl } from '../../utils/subei_config'
   import { mapState, mapMutations, mapActions } from 'vuex'
   import { openConfirm, toast } from '../../utils/base'
+  import SvgIcon from '../../components/Svg.vue'
 
   export default {
     components: {
@@ -57,7 +58,8 @@
       XButton,
       Box,
       PopupPicker,
-      GroupTitle
+      GroupTitle,
+      SvgIcon
     },
     data () {
       return {
@@ -95,11 +97,14 @@
           toast('请填写您要反馈的信息', '11rem')
           return
         }
+        const subPhotos = this.photos.map(function (item) {
+          return item.url.replace(baseUrl, '')
+        })
         const submitInfo = {
-          SupportMemberId: 0,
+          SupportMemberId: sessionStorage.getItem('memberId'),
           SupportProductId: this.product[0],
           SupportProductName: this.productName,
-          SupportPhotoPath: this.photos.join()
+          SupportPhoto: subPhotos.join()
         }
         this.submitFeedback(submitInfo)
       },
@@ -117,20 +122,19 @@
           }
         })
       },
+      // 上传图片
       changeFile () {
         this.files = this.$refs.fileBtn.files[0]
 
         if (this.files) {
           let formData = new FormData()
           formData.append('file', this.files)
-          this.updateLoadingStatus({isLoading: true})
-          this.postUploadPhoto({type: 'RiskHidden', formData: formData}).then((res) => {
+          this.postUploadPhoto({formData: formData}).then((res) => {
             res.info.path = (res.info.path.indexOf('https://') > 0 ? res.info.path : `${baseUrl}${res.info.path}`)
             this.photos.push({
               name: res.info.name,
               url: res.info.path
             })
-            this.updateLoadingStatus({isLoading: false})
           })
         }
       }

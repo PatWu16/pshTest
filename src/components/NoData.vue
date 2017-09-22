@@ -1,7 +1,7 @@
 <template>
     <div id="no-data">
       <div v-if="item.length ===0 || JSON.stringify(item) === '{}' || JSON.stringify(item) === '[]'" :style="style">
-        <div @click="loadFun" :style="refresh">
+        <div @click="loadFun" :style="refresh" class="nodata-refresh">
           <img :src="imgSrc" :style="imgStyle"/>
           <span>刷新</span>
         </div>

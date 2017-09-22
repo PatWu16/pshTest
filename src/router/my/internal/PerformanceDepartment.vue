@@ -1,9 +1,9 @@
 <template>
   <div id="performance-department">
-    <common-header title="销售部门"></common-header>
+    <common-header :title="departmentName"></common-header>
     <div class="header">
       <group>
-        <datetime v-model="date" placeholder="请选择" :min-year=2000 :max-year=2050 format="YYYY" @on-change="change" title="选择年份" year-row="{value}年" confirm-text="完成" cancel-text="取消"></datetime>
+        <datetime v-model="date" placeholder="请选择" :min-year=2000 :max-year=2050 format="YYYY" title="选择年份" year-row="{value}年" confirm-text="完成" cancel-text="取消"></datetime>
       </group>
     </div>
     <div class="content">
@@ -50,10 +50,10 @@
           </tbody>
         </x-table>
       </scroller>-->
-      <div v-for="(item, index) in list">
+      <div v-for="(item, index) in departmentStatisticsList">
         <div class="item-wrapper">
           <WhiteSpace size="md"></WhiteSpace>
-          <div class="item-content" @click="goPage('performanceMember', {})">
+          <div class="item-content" @click="goPage('performanceMember', {time: date, departmentId: departmentId, memberId: item.memberId, memberName: item.memberName})">
             <form-preview :body-items="item.itemHeader"></form-preview>
             <span class="arrow-right"></span>
           </div>
@@ -77,9 +77,9 @@
               <tbody>
               <tr v-for="i in item.itemDetail">
                 <td>{{i.month}}</td>
+                <td>{{i.target}}</td>
                 <td>{{i.sale}}</td>
-                <td>{{i.invoice}}</td>
-                <td>{{i.sale}}</td>
+                <td>{{i.diff}}</td>
                 <td>{{i.invoice}}</td>
               </tr>
               </tbody>
@@ -87,6 +87,7 @@
           </div>
         </div>
       </div>
+      <no-data :item="departmentStatisticsList" :load="getList"></no-data>
       <WhiteSpace size="sm"></WhiteSpace>
     </div>
   </div>
@@ -96,6 +97,8 @@
   import CommonHeader from '../../../components/Header.vue'
   import WhiteSpace from '../../../components/WhiteSpace.vue'
   import { XTable, Scroller, Datetime, Group, FormPreview } from 'vux'
+  import NoData from '../../../components/NoData.vue'
+  import { mapActions, mapState } from 'vuex'
 
   export default {
     components: {
@@ -105,94 +108,66 @@
       Scroller,
       Datetime,
       Group,
-      FormPreview
+      FormPreview,
+      NoData
     },
     data () {
       return {
         date: '2017',
-        list: [{
-          itemHeader: [{
-            label: '业务员',
-            value: '蔡政雅'
-          }, {
-            label: '销售目标',
-            value: 221368
-          }, {
-            label: '实际销售',
-            value: 311384
-          }, {
-            label: '目标差异',
-            value: 368
-          }, {
-            label: '销售发票',
-            value: 3221
-          }],
-          itemDetail: [{
-            month: '一月',
-            sale: 217.95,
-            invoice: 122.36
-          }, {
-            month: '二月',
-            sale: 2417.95,
-            invoice: 122.36
-          }, {
-            month: '三月',
-            sale: 202,
-            invoice: 122.36
-          }, {
-            month: '四月',
-            sale: 12120,
-            invoice: 122.36
-          }, {
-            month: '五月',
-            sale: 352.66,
-            invoice: 122.36
-          }, {
-            month: '六月',
-            sale: 5125.36,
-            invoice: 122.36
-          }, {
-            month: '七月',
-            sale: 5232.11,
-            invoice: 122.36
-          }, {
-            month: '八月',
-            sale: 3221.11,
-            invoice: 122.36
-          }, {
-            month: '九月',
-            sale: 5336.51,
-            invoice: 122.36
-          }, {
-            month: '十月',
-            sale: 6323.33,
-            invoice: 122.36
-          }, {
-            month: '十一月',
-            sale: 565.32,
-            invoice: 122.36
-          }, {
-            month: '十二月',
-            sale: 5456.25,
-            invoice: 122.36
-          }],
-          isShowDetail: false
-        }]
+        departmentName: '',
+        departmentId: ''
       }
     },
-    created () {},
+    computed: {
+      ...mapState({
+        departmentStatisticsList: (state) => {
+          return state.performanceDepartment.departmentStatisticsList
+        }
+      })
+    },
+    watch: {
+      '$route' (to, from) {
+        const routeName = this.$route.name
+
+        if (routeName === 'performanceDepartment') {
+          const departmentId = this.$route.params.departmentId
+          const date = this.$route.params.time
+          if ((departmentId !== this.departmentId || date !== this.date) && departmentId) {
+            this.departmentName = this.$route.params.departmentName
+            this.departmentId = departmentId
+            this.date = date
+
+            this.getList()
+          }
+        }
+      },
+      date () {
+        this.getList()
+      }
+    },
+    created () {
+      this.departmentName = this.$route.params.departmentName
+      this.departmentId = this.$route.params.departmentId
+      this.date = this.$route.params.time
+
+      this.getList()
+    },
     methods: {
+      ...mapActions([
+        'getDepartmentStatisticsList'
+      ]),
+      // 获取列表
+      getList () {
+        this.getDepartmentStatisticsList({time: this.date, id: this.departmentId})
+      },
       // 页面跳转
       goPage (name, params) {
         params = (JSON.stringify(params) === '{}' ? {} : params)
         this.$router.push({name: name, params: params})
       },
-      change (value) {
-        console.log('change', value)
-      },
       // 点击底部切换是否显示详情
       switchDetail (index) {
-        this.list[index].isShowDetail = !this.list[index].isShowDetail
+        this.departmentStatisticsList[index].isShowDetail = !this.departmentStatisticsList[index].isShowDetail
       }
     }
   }

@@ -1,16 +1,15 @@
 <template>
-  <div id="customer-list" :style="{height: height}">
+  <div id="customer-list">
     <common-header title="客户查询"></common-header>
     <div class="header">
-      <search
-        top="46px"
-        ref="search"></search>
+      <search top="46px" ref="search" v-model="keyword" @keyup.enter.native="getList"></search>
     </div>
-    <div class="content" :style="{height: height2}">
-      <div v-for="n in 10">
+    <div class="content">
+      <div v-for="item in customerList">
         <WhiteSpace size="sm"></WhiteSpace>
-        <form-preview :body-items="list"></form-preview>
+        <form-preview :body-items="item"></form-preview>
       </div>
+      <no-data :item="customerList" :load="getList"></no-data>
       <WhiteSpace size="sm"></WhiteSpace>
     </div>
   </div>
@@ -20,61 +19,66 @@
   import CommonHeader from '../../../components/Header.vue'
   import WhiteSpace from '../../../components/WhiteSpace.vue'
   import { FormPreview, Search } from 'vux'
+  import { mapActions, mapState } from 'vuex'
+  import NoData from '../../../components/NoData.vue'
 
   export default {
     components: {
       CommonHeader,
       FormPreview,
       Search,
-      WhiteSpace
+      WhiteSpace,
+      NoData
     },
     data () {
       return {
-        height: '',
-        height2: '',
-        list: [{
-          label: '客户名称',
-          value: '深圳市安特高科实业有限公司'
-        }, {
-          label: '联系人',
-          value: '马云'
-        }, {
-          label: '电话',
-          value: '0755-86060992'
-        },
-        {
-          label: '地址',
-          value: '深圳市南山区兴海大道荔山工业园11栋'
-        }]
+        keyword: ''
       }
     },
+    computed: {
+      ...mapState({
+        customerList (state) {
+          return state.customerList.customerList
+        }
+      })
+    },
     created () {
-      this.height = document.body.clientHeight + 'px'
-      this.height2 = document.body.clientHeight - 90 + 'px'
+      this.getList()
+    },
+    methods: {
+      ...mapActions([
+        'getCustomerList'
+      ]),
+      // 获取列表
+      getList () {
+        this.getCustomerList(this.keyword)
+      }
     }
   }
 </script>
 
 <style lang="less">
 #customer-list {
-  position: relative;
+  width: 100%;
+  height: 100%;
 
   .weui-form-preview__hd {
     display: none;
   }
+
   .header {
-    position: absolute;
-    top: 46px;
-    left: 0;
     width: 100%;
     height: 44px;
   }
+
   .content {
-    position: absolute;
-    top: 90px;
-    left: 0;
     width: 100%;
+    height: calc(~"100% - 90px");
     overflow: auto;
+
+    .nodata-refresh {
+      display: none !important;
+    }
   }
 }
 </style>

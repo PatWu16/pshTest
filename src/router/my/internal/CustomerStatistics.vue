@@ -11,7 +11,7 @@
       <div v-for="(item, index) in customerStatisticsList">
         <div class="item-wrapper">
           <WhiteSpace size="md"></WhiteSpace>
-          <div class="item-content" @click="goPage('customerOrder', {})">
+          <div class="item-content" @click="goPage('customerOrder', { customerName: item.customerName, customerCode: item.customerCode, time: date })">
             <form-preview :body-items="item.itemHeader"></form-preview>
             <span class="arrow-right"></span>
           </div>
@@ -53,7 +53,9 @@
     },
     data () {
       return {
-        date: '2017-08'
+        date: '2017-08',
+        scrollX: 0,
+        scrollY: 0
       }
     },
     computed: {
@@ -64,6 +66,13 @@
       })
     },
     watch: {
+      '$route' (to, from) {
+        const routeName = this.$route.name
+
+        if (routeName === 'CustomerStatistics') {
+
+        }
+      },
       date () {
         this.getList()
       }

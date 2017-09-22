@@ -48,7 +48,9 @@ const actions = {
             label: 'ar',
             value: item.ar
           }],
-          isShowDetail: false
+          isShowDetail: false,
+          customerName: item.csnm_客户名称,
+          customerCode: item.csno_客户代码
         }
       })
       commit('saveCustomerStatisticsList', result)

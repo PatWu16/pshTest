@@ -47,7 +47,7 @@ export default {
     ]
   },
   {
-    path: '/scan/scanResult',
+    path: '/scan/scanResult/:code',
     name: 'scanResult',
     component: ScanResult
   },
@@ -87,12 +87,12 @@ export default {
     component: CustomerStatistics
   },
   {
-    path: '/my/customerStatistics/customerOrder',
+    path: '/my/customerStatistics/customerOrder/:customerName/:customerCode/:time',
     name: 'customerOrder',
     component: CustomerOrder
   },
   {
-    path: '/my/customerStatistics/customerOrder/customerOrderDetail',
+    path: '/my/customerStatistics/customerOrder/customerOrderDetail/:time/:customerCode/:orderNumber',
     name: 'customerOrderDetail',
     component: CustomerOrderDetail
   },
@@ -102,12 +102,12 @@ export default {
     component: PerformanceStatistics
   },
   {
-    path: '/my/performanceStatistics/performanceDepartment',
+    path: '/my/performanceStatistics/performanceDepartment/:departmentName/:departmentId/:time',
     name: 'performanceDepartment',
     component: PerformanceDepartment
   },
   {
-    path: '/my/performanceStatistics/performanceDepartment/performanceMember',
+    path: '/my/performanceStatistics/performanceDepartment/performanceMember/:time/:departmentId/:memberId/:memberName',
     name: 'performanceMember',
     component: PerformanceMember
   },

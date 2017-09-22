@@ -1,12 +1,12 @@
 <template>
-  <div id="my" :style="{ height : height }">
-    <blur :blur-amount=40 :url="url">
+  <div id="my" v-cloak>
+    <blur :blur-amount=40 :url="memberAvatar">
       <p class="center">
-        <img :src="url">
+        <img :src="memberAvatar">
       </p>
-      <p class="name">马云</p>
+      <p class="name">{{memberName}}</p>
     </blur>
-    <group>
+    <group v-if="memberType === 0">
       <cell title="我的信息" is-link @click.native="goPage('myInfo', {})">
         <img slot="icon" width="20" class="icon" src="../../assets/img/my-info.png">
       </cell>
@@ -18,7 +18,7 @@
       </cell>
     </group>
     <WhiteSpace size="lg"></WhiteSpace>
-    <grid class="grid-wrapper">
+    <grid class="grid-wrapper" v-if="memberType !== 0">
       <grid-item label="产品查询" @on-item-click="goPage('productList', {})">
         <img slot="icon" src="../../assets/img/selectionguides.png">
       </grid-item>
@@ -70,12 +70,16 @@
     data () {
       return {
         url: logo,
-        height: '',
-        isToastShow: false
+        isToastShow: false,
+        memberName: '',
+        memberType: null,
+        memberAvatar: ''
       }
     },
     created () {
-      this.height = document.body.clientHeight - 50 + 'px'
+      this.memberName = sessionStorage.getItem('memberName')
+      this.memberType = Number(sessionStorage.getItem('memberType'))
+      this.memberAvatar = sessionStorage.getItem('memberAvatar')
     },
     methods: {
       // 页面跳转
@@ -95,6 +99,8 @@
 <style lang="less">
 #my {
   overflow: auto;
+  width: 100%;
+  height: calc(~"100% - 50px");
 
   .center {
     text-align: center;

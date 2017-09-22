@@ -1,16 +1,15 @@
 <template>
-  <div id="product-list" :style="{height: height}">
+  <div id="product-list">
     <common-header title="产品查询"></common-header>
     <div class="header">
-      <search
-        top="46px"
-        ref="search"></search>
+      <search top="46px" ref="search" v-model="keyword" @keyup.enter.native="getList"></search>
     </div>
-    <div class="content" :style="{height: height2}">
-      <div v-for="item in list">
+    <div class="content">
+      <div v-for="item in productList">
         <WhiteSpace size="sm"></WhiteSpace>
         <form-preview :body-items="list"></form-preview>
       </div>
+      <no-data :item="productList" :load="getList"></no-data>
       <WhiteSpace size="sm"></WhiteSpace>
     </div>
   </div>
@@ -20,18 +19,20 @@
   import CommonHeader from '../../../components/Header.vue'
   import WhiteSpace from '../../../components/WhiteSpace.vue'
   import { FormPreview, Search } from 'vux'
+  import { mapActions, mapState } from 'vuex'
+  import NoData from '../../../components/NoData.vue'
 
   export default {
     components: {
       CommonHeader,
       FormPreview,
       Search,
-      WhiteSpace
+      WhiteSpace,
+      NoData
     },
     data () {
       return {
-        height: '',
-        height2: '',
+        keyword: '',
         list: [{
           label: '序列号',
           value: 'H1602770CN'
@@ -44,11 +45,22 @@
         }]
       }
     },
-    created () {
-      this.height = document.body.clientHeight + 'px'
-      this.height2 = document.body.clientHeight - 90 + 'px'
+    computed: {
+      ...mapState({
+        productList (state) {
+          return state.productList.productList
+        }
+      })
     },
+    created () {},
     methods: {
+      ...mapActions([
+        'queryProductList'
+      ]),
+      // 获取列表
+      getList () {
+        this.queryProductList(this.keyword)
+      },
       change (value) {
         console.log('change', value)
       }
@@ -58,24 +70,24 @@
 
 <style lang="less">
 #product-list {
-  position: relative;
+  width: 100%;
+  height: 100%;
 
   .weui-form-preview__hd {
     display: none;
   }
   .header {
-    position: absolute;
-    top: 46px;
-    left: 0;
     width: 100%;
     height: 44px;
   }
   .content {
-    position: absolute;
-    top: 90px;
-    left: 0;
     width: 100%;
+    height: calc(~"100% - 90px");
     overflow: auto;
+
+    .nodata-refresh {
+      display: none !important;
+    }
   }
 }
 </style>

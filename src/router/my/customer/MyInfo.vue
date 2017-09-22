@@ -2,7 +2,7 @@
   <div id="my-info" v-cloak>
     <common-header title="我的信息"></common-header>
     <group label-width="4.5em" label-margin-right="0.5em">
-      <x-input title="代码" placeholder="代码" v-model="myInfo.customerCode"></x-input>
+      <x-input title="代码" readonly placeholder="代码" v-model="myInfo.customerCode"></x-input>
       <x-input title="名称" placeholder="名称" v-model="myInfo.customerName"></x-input>
       <x-input title="联系人" placeholder="联系人" v-model="myInfo.name"></x-input>
       <x-input title="电话号码" placeholder="电话号码" v-model="myInfo.phone"></x-input>
@@ -66,11 +66,20 @@
     },
     methods: {
       ...mapActions([
-        'getMyInfo'
+        'getMyInfo',
+        'changeMyInfo'
       ]),
       // 保存信息
       submit () {
-        console.log(this.myInfo)
+        const submitInfo = {
+          ID: this.myInfo.id,
+          cusno_客户代码: this.myInfo.customerCode,
+          cusnm_客户名称: this.myInfo.customerName,
+          address_地址: this.myInfo.customerAddress,
+          phone_电话: this.myInfo.phone,
+          Contact_联系人: this.myInfo.name
+        }
+        this.changeMyInfo(submitInfo)
       }
     }
   }

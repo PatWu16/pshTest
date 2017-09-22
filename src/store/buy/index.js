@@ -24,7 +24,7 @@ const actions = {
       let result = res.info.map(function (item) {
         return {
           name: item.fgtypenm_产品类别.toString(),
-          value: item.fgtypeid_产品类别ID.toString()
+          value: item.fgtypeid_产品类别ID + ''
         }
       })
       commit('saveInquiryType', result)

@@ -2,7 +2,7 @@
  * Created by Administrator on 2017/9/15.
  */
 import axiosApi from './../utils/axios.js'
-import { apiUrl, apiUrl1 } from './../utils/subei_config'
+import { apiUrl, apiUrl1, baseUrl } from './../utils/subei_config'
 
 // 扫码查询
 export const getProduct = async (qrcode) => {
@@ -16,7 +16,11 @@ export const submitFeedback = async (feedbackInfo) => {
 
 // 获取图片链接
 export const postUploadPhoto = async (param) => {
-  console.log('在api文件')
-  console.log(param.formData)
-  return await axiosApi(`${apiUrl}Common/UploadPhoto?type=${param.type}`, 'postFile', param.formData)
+  return await axiosApi(`${baseUrl}/Common/UploadPhoto?type=OrderSupport`, 'postFile', param.formData)
 }
+
+// 获取banner
+export const getBannerList = async () => {
+  return await axiosApi(`${apiUrl1}Banner`, 'post')
+}
+

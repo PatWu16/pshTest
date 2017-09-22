@@ -3,7 +3,7 @@
     <swiper loop auto :list="bannerList"></swiper>
     <grid :rows="1">
       <grid-item label="一键追溯">
-        <img slot="icon" src="../../assets/img/qr-scan.png" @click="goPage('scanResult', {code: 'H1602770CN'})">
+        <img slot="icon" src="../../assets/img/qr-scan.png" @click="scanCode">
       </grid-item>
       <grid-item label="技术支持">
         <img slot="icon" style="width: 87.5%;" src="../../assets/img/technical.png" @click="goPage('feedback', {})">
@@ -15,6 +15,7 @@
 <script>
   import { Swiper, SwiperItem, Grid, GridItem } from 'vux'
   import WhiteSpace from '../../components/WhiteSpace.vue'
+  import { mapState, mapActions } from 'vuex'
   import banner1 from '../../assets/img/banner_1.jpg'
   import banner2 from '../../assets/img/banner_2.jpg'
   import banner3 from '../../assets/img/banner_3.jpg'
@@ -48,15 +49,42 @@
     },
     data () {
       return {
-        bannerList: baseList
+        bannerList1: baseList
       }
     },
-    created () {},
+    computed: {
+      ...mapState({
+        bannerList: (state) => {
+          return state.scan.bannerList
+        },
+        code: (state) => {
+          return state.scan.code
+        }
+      })
+    },
+    watch: {
+      code () {
+        if (this.code) {
+          this.goPage('scanResult', {code: this.code})
+        }
+      }
+    },
+    created () {
+      this.getBannerList()
+    },
     methods: {
+      ...mapActions([
+        'getBannerList',
+        'scanQRCode'
+      ]),
       // 页面跳转
       goPage (name, params) {
         params = (JSON.stringify(params) === '{}' ? {} : params)
         this.$router.push({name: name, params: params})
+      },
+      // 扫描二维码
+      scanCode () {
+        this.scanQRCode()
       }
     }
   }

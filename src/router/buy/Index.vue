@@ -90,13 +90,13 @@
           return
         }
         const submitInfo = {
-          InquiryMemberId: 0,
+          InquiryMemberId: sessionStorage.getItem('memberId'),
           InquiryProductType: this.product[0],
           InquiryProductTypeName: this.productName,
-          InquiryIntro: this.intro
-//          InquiryManName: this.name,
-//          InquiryManTel: this.phone,
-//          InquiryEmail: this.email
+          InquiryIntro: this.intro,
+          InquiryManName: this.name,
+          InquiryManTel: this.phone,
+          InquiryEmail: this.email
         }
         this.submitRequest(submitInfo)
       },

@@ -3,7 +3,7 @@
     <common-header title="我的产品"></common-header>
     <div class="header">
       <group>
-        <datetime v-model="date" placeholder="请选择" :min-year=2000 :max-year=2050 format="YYYY-MM" @on-change="change" title="选择月份" year-row="{value}年" month-row="{value}月" confirm-text="完成" cancel-text="取消"></datetime>
+        <datetime v-model="date" placeholder="请选择" :min-year=2000 :max-year=2050 format="YYYY-MM" title="选择月份" year-row="{value}年" month-row="{value}月" confirm-text="完成" cancel-text="取消"></datetime>
       </group>
     </div>
     <div class="content">
@@ -62,9 +62,6 @@
       // 获取列表
       getList () {
         this.getMyProductList({time: this.date, id: '10258'})
-      },
-      change (value) {
-        console.log('change', value)
       }
     }
   }

@@ -2,15 +2,14 @@
   <div id="order-warn">
     <common-header title="订单预警"></common-header>
     <div class="header">
-      <search
-        top="46px"
-        ref="search"></search>
+      <search top="46px" ref="search" v-model="keyword" @keyup.enter.native="getList"></search>
     </div>
-    <div class="content" :style="{height: height2}">
-      <div v-for="n in 10">
+    <div class="content">
+      <div v-for="item in orderWarnList">
         <WhiteSpace size="sm"></WhiteSpace>
-        <form-preview :body-items="list"></form-preview>
+        <form-preview :body-items="item"></form-preview>
       </div>
+      <no-data :item="orderWarnList" :load="getList"></no-data>
       <WhiteSpace size="sm"></WhiteSpace>
     </div>
   </div>
@@ -20,35 +19,39 @@
   import CommonHeader from '../../../components/Header.vue'
   import WhiteSpace from '../../../components/WhiteSpace.vue'
   import { FormPreview, Search } from 'vux'
+  import { mapActions, mapState } from 'vuex'
+  import NoData from '../../../components/NoData.vue'
 
   export default {
     components: {
       CommonHeader,
       FormPreview,
       Search,
-      WhiteSpace
+      WhiteSpace,
+      NoData
     },
     data () {
       return {
-        list: [{
-          label: '销售订单',
-          value: 'SO170811914'
-        }, {
-          label: '客户名称',
-          value: 'ASHCROFT INC'
-        }, {
-          label: '输入日期',
-          value: '2017-09-08'
-        }, {
-          label: '交期',
-          value: '2017-09-19'
-        }, {
-          label: '逾期天数',
-          value: 11
-        }, {
-          label: '交期与到货相差天数',
-          value: 3
-        }]
+        keyword: ''
+      }
+    },
+    created () {
+      this.getList()
+    },
+    computed: {
+      ...mapState({
+        orderWarnList (state) {
+          return state.orderWarn.orderWarnList
+        }
+      })
+    },
+    methods: {
+      ...mapActions([
+        'getOrderWarnList'
+      ]),
+      // 获取列表
+      getList () {
+        this.getOrderWarnList(this.keyword)
       }
     }
   }
@@ -75,6 +78,10 @@
     .weui-form-preview__bd .weui-form-preview__item:last-child .weui-form-preview__value {
       color: red;
       font-size: 16px;
+    }
+
+    .nodata-refresh {
+      display: none !important;
     }
   }
 }

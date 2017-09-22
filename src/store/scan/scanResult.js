@@ -2,6 +2,7 @@
  * Created by Administrator on 2017/9/15.
  */
 import { getProduct } from '../../servers/scan'
+import { toast } from '../../utils/base'
 
 const state = {
   product: []
@@ -17,6 +18,10 @@ const actions = {
   // 获取商品信息
   getProduct ({commit, state, dispatch, getters}, payload) {
     getProduct(payload).then((res) => {
+      if (!res.info.length) {
+        toast('该产品不存在')
+        return
+      }
       let result = [{
         label: '序列号',
         value: res.info[0].SN_序列号

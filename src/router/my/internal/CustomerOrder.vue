@@ -1,9 +1,9 @@
 <template>
   <div id="customer-order">
-    <common-header title="Ashcroft Instruments GmbH"></common-header>
+    <common-header :title="customerName"></common-header>
     <div class="header">
       <group>
-        <datetime v-model="date" placeholder="请选择" :min-year=2000 :max-year=2050 format="YYYY-MM" @on-change="change" title="选择月份" year-row="{value}年" month-row="{value}月" confirm-text="完成" cancel-text="取消"></datetime>
+        <datetime v-model="date" placeholder="请选择" :min-year=2000 :max-year=2050 format="YYYY-MM" title="选择月份" year-row="{value}年" month-row="{value}月" confirm-text="完成" cancel-text="取消"></datetime>
       </group>
     </div>
     <div class="content">
@@ -61,10 +61,10 @@
           </tbody>
         </x-table>
       </scroller>-->
-      <div v-for="(item, index) in list">
+      <div v-for="(item, index) in customerOrderList">
         <div class="item-wrapper">
           <WhiteSpace size="md"></WhiteSpace>
-          <div class="item-content"  @click="goPage('customerOrderDetail', {})">
+          <div class="item-content"  @click="goPage('customerOrderDetail', {time: date, customerCode: item.customerCode, orderNumber: item.orderNumber})">
             <form-preview :body-items="item.itemHeader"></form-preview>
             <span class="arrow-right"></span>
           </div>
@@ -78,6 +78,7 @@
           </div>
         </div>
       </div>
+      <no-data :item="customerOrderList" :load="getList"></no-data>
       <WhiteSpace size="sm"></WhiteSpace>
     </div>
   </div>
@@ -87,6 +88,8 @@
   import CommonHeader from '../../../components/Header.vue'
   import WhiteSpace from '../../../components/WhiteSpace.vue'
   import { XTable, Scroller, Datetime, Group, FormPreview } from 'vux'
+  import { mapActions, mapState } from 'vuex'
+  import NoData from '../../../components/NoData.vue'
 
   export default {
     components: {
@@ -96,67 +99,69 @@
       Scroller,
       Datetime,
       Group,
-      FormPreview
+      FormPreview,
+      NoData
     },
     data () {
       return {
         date: '2017-09',
-        height: '',
-        height2: '',
-        list: [{
-          itemHeader: [{
-            label: '订单号',
-            value: 'SO170811857'
-          }, {
-            label: '销售额',
-            value: '18529.74'
-          }, {
-            label: '收款',
-            value: '0'
-          }, {
-            label: '订单状态',
-            value: '已审核'
-          }],
-          itemDetail: [{
-            label: '输入日期',
-            value: '2017-09-08'
-          }, {
-            label: '交货日期',
-            value: '2017-09-17'
-          }, {
-            label: '含税销售额',
-            value: '217.95'
-          }, {
-            label: '开票额',
-            value: '27.95'
-          }, {
-            label: '标准毛利',
-            value: '121.68'
-          }, {
-            label: '团队',
-            value: 'OEM'
-          }, {
-            label: '业务员',
-            value: '蔡婷娴/Cassie Cai'
-          }],
-          isShowDetail: false
-        }]
+        customerName: '客户名称',
+        customerCode: null
       }
     },
     created () {
+      this.customerName = this.$route.params.customerName
+      this.customerCode = this.$route.params.customerCode
+      this.date = this.$route.params.time
+
+      this.getList()
+    },
+    computed: {
+      ...mapState({
+        customerOrderList: (state) => {
+          return state.customerOrder.customerOrderList
+        }
+      })
+    },
+    watch: {
+      customerCode () {
+        this.getList()
+      },
+      '$route' (to, from) {
+        const routeName = this.$route.name
+
+        if (routeName === 'customerOrder') {
+          const customerCode = this.$route.params.customerCode
+          const date = this.$route.params.time
+          if ((customerCode !== this.customerCode || date !== this.date) && customerCode) {
+            this.customerName = this.$route.params.customerName
+            this.customerCode = customerCode
+            this.date = this.$route.params.time
+
+            this.getList()
+          }
+        }
+      },
+      date () {
+        this.getList()
+      }
     },
     methods: {
+      ...mapActions([
+        'getCustomerOrderList'
+      ]),
+      // 获取列表
+      getList () {
+        this.getCustomerOrderList({time: this.date, id: this.customerCode})
+      },
       // 页面跳转
       goPage (name, params) {
         params = (JSON.stringify(params) === '{}' ? {} : params)
         this.$router.push({name: name, params: params})
       },
-      change (value) {
-        console.log('change', value)
-      },
       // 点击底部切换是否显示详情
       switchDetail (index) {
-        this.list[index].isShowDetail = !this.list[index].isShowDetail
+        this.customerOrderList[index].isShowDetail = !this.customerOrderList[index].isShowDetail
       }
     }
   }
