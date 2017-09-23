@@ -1,13 +1,15 @@
 /**
  * Created by Administrator on 2017/9/15.
  */
-import { getBannerList } from '../../servers/scan'
+import { getBannerList, uploadLocation, getServiceInfo } from '../../servers/scan'
 import { baseUrl } from '../../utils/subei_config'
-import { wxScanQRCodes } from '../../utils/weixin'
+import { wxScanQRCodes, wxGetLocation } from '../../utils/weixin'
 
 const state = {
   bannerList: [],        // banner列表
-  code: ''               // 二维码
+  code: '',               // 二维码
+  serviceTel: '',         // 客服电话
+  serviceEmail: ''         // 客服邮箱
 }
 
 const mutations = {
@@ -16,6 +18,10 @@ const mutations = {
   },
   saveCode (state, payload) {
     state.code = payload
+  },
+  saveServiceInfo (state, payload) {
+    state.serviceEmail = payload.serviceEmail
+    state.serviceTel = payload.serviceTel
   }
 }
 
@@ -37,6 +43,22 @@ const actions = {
   scanQRCode ({commit, state, dispatch, getters}, payload) {
     wxScanQRCodes(function (code) {
       commit('saveCode', code)
+    })
+  },
+  // 上传地理定位
+  uploadLocation ({commit, state, dispatch, getters}, payload) {
+    // 获取定位
+    wxGetLocation(function (lat, lon) {
+      const memberId = Number(sessionStorage.getItem('memberId'))
+      uploadLocation(lat, lon, memberId).then((res) => {})
+    })
+  },
+  // 获取客服邮箱和电话
+  getServiceInfo ({commit, state, dispatch, getters}, payload) {
+    getServiceInfo().then((res) => {
+      if (res.all.status) {
+        commit('saveServiceInfo', {serviceEmail: res.info.setting_OfficianEMail, serviceTel: res.info.setting_OfficianTel})
+      }
     })
   }
 }

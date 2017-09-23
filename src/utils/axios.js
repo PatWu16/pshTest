@@ -9,7 +9,7 @@ Vue.use(ToastPlugin)
 
 export default (url, type, param) => {
   let isLoading = true
-  axios.defaults.withCredentials = true
+  axios.defaults.withCredentials = false
   axios.defaults.timeout = 5000
   const goBack = () => {
     // setTimeout(() => {

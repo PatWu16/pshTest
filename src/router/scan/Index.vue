@@ -71,11 +71,15 @@
     },
     created () {
       this.getBannerList()
+      this.uploadLocation()
+      this.getServiceInfo()
     },
     methods: {
       ...mapActions([
         'getBannerList',
-        'scanQRCode'
+        'scanQRCode',
+        'uploadLocation',
+        'getServiceInfo'
       ]),
       // 页面跳转
       goPage (name, params) {

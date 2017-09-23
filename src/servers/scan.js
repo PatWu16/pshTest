@@ -24,3 +24,12 @@ export const getBannerList = async () => {
   return await axiosApi(`${apiUrl1}Banner`, 'post')
 }
 
+// 上传地理定位
+export const uploadLocation = async (lat, lon, id) => {
+  return await axiosApi(`${apiUrl}Weixin/GetWxUserLocation?lat=${lat}&lon=${lon}&id=${id}`, 'get')
+}
+
+// 获取客服信息
+export const getServiceInfo = async () => {
+  return await axiosApi(`${baseUrl}/System/GetSysSetInfo`, 'get')
+}

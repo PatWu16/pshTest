@@ -4,11 +4,11 @@
     <group>
       <cell title="客服电话">
         <div slot="value">
-          <a href="tel:13764567708">13764567708</a>
+          <a :href="showServiceTel">{{serviceTel}}</a>
         </div>
       </cell>
       <cell title="客服邮箱">
-        <div slot="value">CASE@ashcroft.com</div>
+        <div slot="value">{{serviceEmail}}</div>
       </cell>
     </group>
     <group-title>请选择您需求的产品</group-title>
@@ -63,8 +63,17 @@
       ...mapState({
         inquiryType: (state) => {
           return state.buy.inquiryType
+        },
+        serviceTel: (state) => {
+          return state.scan.serviceTel
+        },
+        serviceEmail: (state) => {
+          return state.scan.serviceEmail
         }
-      })
+      }),
+      showServiceTel () {
+        return 'tel:' + this.serviceTel
+      }
     },
     watch: {
       inquiryType () {
@@ -72,6 +81,8 @@
       }
     },
     created () {
+      this.serviceEmail = sessionStorage.getItem('serviceEmail')
+      this.serviceTel = sessionStorage.getItem('serviceTel')
       this.getInquiryType()
     },
     methods: {

@@ -7,13 +7,13 @@ import App from './App'
 import routerConfig from './router.config'
 import {store} from './store'
 import './utils/filter.js'
-// import { wxInit, oAuth } from './utils/weixin'
+import { wxInit, oAuth } from './utils/weixin'
 
 // 微信api初始化
-// wxInit()
+wxInit()
 
 // 微信授权
-// oAuth()
+oAuth()
 
 Vue.use(VueRouter)
 
